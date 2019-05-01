@@ -23,6 +23,7 @@ export default class AudioControls extends Component {
   constructor(props) {
     super(props);
     this.track = new Audio(props.selectedTrack.trackUrl);
+    this.progressBarRef = React.createRef();
     this.state = {
       songIsPlayed: false,
       durationProgressBar : 0,
@@ -52,7 +53,7 @@ export default class AudioControls extends Component {
   }
 
   getProgressBarValue(event, progressBarType) {
-    const progressBarWidth = document.querySelector(`.${ progressBarType }`).offsetWidth;
+    const progressBarWidth = this.progressBarRef.current.offsetWidth;
     const selectedSeekBarPercent = Math.ceil(event.nativeEvent.offsetX / progressBarWidth * 100);
     if (progressBarType === 'durationProgressBarWrap') {
       this.track.currentTime = (this.track.duration * selectedSeekBarPercent) / 100;
@@ -141,7 +142,7 @@ export default class AudioControls extends Component {
   renderDurationProgressBar() {
     const { durationProgressBar } = this.state;
     return (
-      <div className='durationProgressBarWrap' onClick={(event) => this.getProgressBarValue(event, 'durationProgressBarWrap')}>
+      <div className='durationProgressBarWrap' ref={ this.progressBarRef } onClick={(event) => this.getProgressBarValue(event, 'durationProgressBarWrap')}>
         <ProgressBar
           now={ durationProgressBar }
         />
