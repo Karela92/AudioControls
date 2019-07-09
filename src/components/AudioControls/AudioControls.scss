@@ -1,0 +1,33 @@
+.audioControls {
+  display: flex;
+  align-items: flex-end;
+  button {
+    outline: none;
+  }
+  &__title {
+    width: 35%;
+    margin-left: 30px;
+  }
+}
+
+.selectedTrackDescription {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.nextBtn, .prevBtn, .playBtn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  img {
+    max-width: 30px;
+    height: 30px;
+  }
+}
+
+.volumeProgressBarWrap {
+    width: 10%;
+    margin-left: 20px;
+}

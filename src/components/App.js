@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import root from './store/reducers'
+import root from '../store/reducers'
 
-import AudioControlsContainer from './components/AudioControls/AudioControlsContainer';
-import PlayListContainer from './components/PlayList/PlayListContainer';
+import AudioControlsContainer from './AudioControls/AudioControlsContainer';
+import PlayListContainer from './PlayList/PlayListContainer';
 
-import './App.css';
+import './App.scss';
 
 const store = createStore(root);
 

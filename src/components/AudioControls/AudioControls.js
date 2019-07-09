@@ -3,12 +3,14 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import moment from 'moment'
 import PropTypes from 'prop-types';
 
+import ControlButton from './ControlButton/ControlButton'
+
 import nextBtn from '../../assets/next.png';
 import prevBtn from '../../assets/prev.png';
 import playBtn from '../../assets/play.png';
 import pauseBtn from '../../assets/pause.png';
 
-import './AudioControls.css';
+import './AudioControls.scss';
 
 export default class AudioControls extends Component {
 
@@ -23,7 +25,8 @@ export default class AudioControls extends Component {
   constructor(props) {
     super(props);
     this.track = new Audio(props.selectedTrack.trackUrl);
-    this.progressBarRef = React.createRef();
+    this.durationProgressBarRef = React.createRef();
+    this.volumeProgressBarRef = React.createRef();
     this.state = {
       songIsPlayed: false,
       durationProgressBar : 0,
@@ -52,8 +55,8 @@ export default class AudioControls extends Component {
     }
   }
 
-  getProgressBarValue(event, progressBarType) {
-    const progressBarWidth = this.progressBarRef.current.offsetWidth;
+  getProgressBarValue(event, progressBarType, progressBarRef) {
+    const progressBarWidth = progressBarRef.current.offsetWidth;
     const selectedSeekBarPercent = Math.ceil(event.nativeEvent.offsetX / progressBarWidth * 100);
     if (progressBarType === 'durationProgressBarWrap') {
       this.track.currentTime = (this.track.duration * selectedSeekBarPercent) / 100;
@@ -72,7 +75,6 @@ export default class AudioControls extends Component {
   startPlayTrack() {
     if (this.track.paused) {
       this.track.play();
-
       this.setState({
         songIsPlayed: true
       });
@@ -118,23 +120,25 @@ export default class AudioControls extends Component {
     const { songIsPlayed } = this.state;
     return (
       <div>
-        <button className='prevBtn' onClick={ () => this.getPrevOrNextTrack('prevTrack') }>
-          <img
-            src={ prevBtn }
-            alt='Предыдущий трек'
-            title='Предыдущий трек' />
-        </button>
+        <ControlButton
+          type={ 'prevBtn' }
+          imgSrc={ prevBtn }
+          imgAlt={ 'Предыдущий трек' }
+          imgTitle={ 'Предыдущий трек' }
+          onClickButton={ () => this.getPrevOrNextTrack() }
+        />
         <button className='playBtn' onClick={() => this.startPlayTrack()}>
           <img
             src={ songIsPlayed || !this.track.paused  ? pauseBtn : playBtn }
             alt='' />
         </button>
-        <button className='nextBtn' onClick={ () => this.getPrevOrNextTrack('nextTrack') }>
-          <img
-            src={ nextBtn }
-            alt='Следующий трек'
-            title='Следующий трек' />
-        </button>
+        <ControlButton
+          type={ 'nextBtn' }
+          imgSrc={ nextBtn }
+          imgAlt={ 'Следующий трек' }
+          imgTitle={ 'Следующий трек' }
+          onClickButton={ () => this.getPrevOrNextTrack() }
+        />
       </div>
     )
   }
@@ -142,7 +146,10 @@ export default class AudioControls extends Component {
   renderDurationProgressBar() {
     const { durationProgressBar } = this.state;
     return (
-      <div className='durationProgressBarWrap' ref={ this.progressBarRef } onClick={(event) => this.getProgressBarValue(event, 'durationProgressBarWrap')}>
+      <div
+        className='durationProgressBarWrap'
+        ref={ this.durationProgressBarRef }
+        onClick={(event) => this.getProgressBarValue(event, 'durationProgressBarWrap', this.durationProgressBarRef)}>
         <ProgressBar
           now={ durationProgressBar }
         />
@@ -153,7 +160,10 @@ export default class AudioControls extends Component {
   renderVolumeProgressBar() {
     const { volumeProgressBar } = this.state;
     return (
-      <div className='volumeProgressBarWrap' onClick={(event) => this.getProgressBarValue(event, 'volumeProgressBarWrap')}>
+      <div
+        className='volumeProgressBarWrap'
+        ref={ this.volumeProgressBarRef }
+        onClick={(event) => this.getProgressBarValue(event, 'volumeProgressBarWrap', this.volumeProgressBarRef)}>
         <ProgressBar now={ volumeProgressBar } />
       </div>
     )
@@ -178,15 +188,13 @@ export default class AudioControls extends Component {
 
   render() {
     return (
-      <div>
-        <div className='audioControls'>
-          { this.renderAudioControlsButtons() }
-          <div className='audioControlsTitle'>
-            { this.renderTrackInfo() }
-            { this.renderDurationProgressBar() }
-          </div>
-          { this.renderVolumeProgressBar() }
+      <div className='audioControls'>
+        { this.renderAudioControlsButtons() }
+        <div className='audioControls__title'>
+          { this.renderTrackInfo() }
+          { this.renderDurationProgressBar() }
         </div>
+        { this.renderVolumeProgressBar() }
       </div>
     )
   }
